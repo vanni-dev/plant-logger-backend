@@ -4,15 +4,15 @@ import Server from '../../server.js';
 const testServer = new Server(5001, false);
 const app = testServer.getApp()
 
-beforeAll(() => {
-  testServer.start();
-});
-
-afterAll(() => {
-  testServer.close();
-});
-
 describe('Endpoint tests', () => {
+  beforeAll(() => {
+    testServer.start();
+  });
+
+  afterAll(() => {
+    testServer.close();
+  });
+
   it('should return status 200 for GET /', async () => {
     const res = await request(app).get('/');
     expect(res.statusCode).toBe(200);
