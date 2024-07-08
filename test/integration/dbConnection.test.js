@@ -1,21 +1,12 @@
-// import 'dotenv/config';
-import pool from '../../config/db.js';
+import db from '../../lib/PlantLoggerDB.js';
 
-describe('Database Connection', () => {
+describe('PlantLoggerDB', () => {
   afterAll(async () => {
-    await pool.end(); // Properly close the pool after all tests
-  });
-  
-  it('should connect to the database and perform a query', async () => {
-    let conn;
-    try {
-      conn = await pool.getConnection();
-      const rows = await conn.query('SELECT 1 as val');
-      expect(rows).toEqual([{ val: 1 }]);
-    } catch (err) {
-      throw err;
-    } finally {
-      if (conn) conn.end();
-    }
-  });
+    await db.destroy();
+  })
+
+  it('should return a successful connection message', async () => {
+    const result = await db.testConnection();
+    expect(result).toBe(true);
+  })
 });
