@@ -4,11 +4,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env main.js",
+    "start": "node --env-file=.env src/main.js",
     "jest": "node --env-file=.env --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test": "npm run jest --",
-    "test:unit": "npm run jest -- test/unit",
-    "test:integration": "npm run jest -- test/integration"
+    "test:unit": "npm run jest -- src/test/unit",
+    "test:integration": "npm run jest -- src/test/integration"
   },
   "jest": {
     "transform": {}
@@ -17,11 +17,12 @@
   "author": "Victor Vanni",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "knex": "^3.1.0",
     "mariadb": "^3.3.1",
     "multer": "^1.4.5-lts.1",
-    "mysql": "^2.18.1"
+    "mysql2": "^3.10.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",

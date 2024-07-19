@@ -1,37 +1,16 @@
 import express from 'express';
-import cors from 'cors';
 
-import statusRoutes from './routes/status.js';
-import plantRoutes from './routes/plants.js';
-import logRoutes from './routes/logs.js';
-import changeRoutes from './routes/changes.js';
+import Routes from './routes/Routes.js';
 
 class Server {
   constructor(port = process.env.PORT || 5000, start=true) {
     this.app = express();
     this.port = port;
-    this.setupApp();
+    Routes.setup(this.app);
     if (start) {
       this.start();
     }
-  }
-
-  setupApp() {
-    // Middlewares
-    this.app.use(cors());
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
-
-    //Uploads
-    this.app.use('/uploads', express.static('./uploads'));
-
-    // Routes
-    this.app.use('/', statusRoutes);
-    this.app.use('/status', statusRoutes);
-    this.app.use('/plants', plantRoutes);
-    this.app.use('/logs', logRoutes);
-    this.app.use('/changes', changeRoutes);
-  }
+  }y
 
   start() {
     try {
