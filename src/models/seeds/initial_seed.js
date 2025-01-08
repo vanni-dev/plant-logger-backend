@@ -135,4 +135,27 @@ export async function seed(knex) {
   } else {
     dummyLogId = dummyLogId.id;
   }
+
+  const imageFilename = 'dummy-image.jpg';
+  let dummyImageId = await knex('fact_images')
+    .select('id')
+    .where({ filename: imageFilename })
+    .first();
+  if (!dummyImageId) {
+    dummyImageId = await knex('fact_images').insert({
+      plant_id: dummyPlantId,
+      timestamp: knex.fn.now(),
+      filename: imageFilename,
+      latitude: -34.6037,
+      longitude: -58.3816,
+      photo_taken_at: knex.fn.now(),
+      device_model: 'DummyCam 3000',
+      iso: 100,
+      exposure_time: 250,
+      f_number: 1.8
+    });
+    dummyImageId = dummyImageId[0];
+  } else {
+    dummyImageId = dummyImageId.id;
+  }
 }

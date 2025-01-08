@@ -1,7 +1,12 @@
-import Server from './src/server.js';
+import Server from './server.js';
 import 'dotenv/config';
 
-const server = new Server(5000);
+if (!process.env.NODE_PORT) {
+  console.error('Environment variable NODE_PORT is required');
+  process.exit(1);
+}
+
+const server = new Server(process.env.NODE_PORT).start();
 
 process.on('SIGINT', shutdown); 
 process.on('SIGTERM', shutdown);

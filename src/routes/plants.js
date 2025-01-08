@@ -60,6 +60,11 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
+    if (!req.params.id) {
+      req.status(400).json(
+        formatResponse(400, 'BadRequest: Failed to load plant', null, 'Plant ID is required')
+      );
+    }
     const plant = await PlantsService.getPlantById(req.params.id);
     res.json(
       formatResponse(200, `${req.params.id} loaded`, { plant })

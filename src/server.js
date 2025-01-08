@@ -1,11 +1,17 @@
 import express from 'express';
+import path from 'path';
 
 import Routes from './routes/Routes.js';
 
 class Server {
-  constructor(port = process.env.PORT || 5000, start=true) {
+  constructor(port, start=false) {
+    if (!port) {
+      console.error('Port is required');
+      process.exit(1);
+    }
     this.app = express();
     this.port = port;
+    this.app.use('/assets', express.static(path.join(process .cwd(), 'uploads')));
     Routes.setup(this.app);
     if (start) {
       this.start();
@@ -21,6 +27,8 @@ class Server {
       console.error('Error starting server:', err);
       process.exit(1);
     }
+
+    return this;
   }
 
   close(callback) {

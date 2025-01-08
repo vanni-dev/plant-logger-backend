@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "plant-logger-backend",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
     "supertest": "^7.0.0"
   },
   "directories": {},

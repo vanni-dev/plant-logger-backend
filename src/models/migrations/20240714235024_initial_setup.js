@@ -4,7 +4,7 @@
  */
 export async function up(knex) {
   // Create fact_plants table first
-  await knex.schema.createTable('fact_plants', function(table) {
+  await knex.schema.createTable('fact_plants', function (table) {
     table.increments('id').primary();
     table.string('name').notNullable();
     table.integer('mother_id').unsigned().nullable();
@@ -28,13 +28,13 @@ export async function up(knex) {
     table.index(['gender']);
   });
 
-  await knex.schema.createTable('dim_terpenes', function(table) {
+  await knex.schema.createTable('dim_terpenes', function (table) {
     table.increments('id').primary();
     table.string('name').notNullable();
     table.text('description').nullable();
   });
 
-  await knex.schema.createTable('dim_strains', function(table) {
+  await knex.schema.createTable('dim_strains', function (table) {
     table.increments('id').primary();
     table.string('name').notNullable();
     table.decimal('thc', 5, 2).notNullable();
@@ -50,10 +50,8 @@ export async function up(knex) {
     table.tinyint('time_until_harvesting').unsigned().notNullable();
     table.integer('father_plant_id').unsigned().nullable();
     table.integer('mother_plant_id').unsigned().nullable();
-    table.integer('father_strain_id').unsigned().nullable();
-    table.integer('mother_strain_id').unsigned().nullable();
     table.tinyint('cultivation_difficulty').unsigned().notNullable();
-    table.smallint('height').unsigned().notNullable(); // Height in cm
+    table.smallint('height').unsigned().notNullable();
     table.string('origin').notNullable();
     table.text('description').notNullable();
 
@@ -63,12 +61,12 @@ export async function up(knex) {
     table.index(['cultivation_difficulty']);
   });
 
-  await knex.schema.createTable('dim_change_categories', function(table) {
+  await knex.schema.createTable('dim_change_categories', function (table) {
     table.increments('id').primary();
     table.string('name').notNullable();
   });
 
-  await knex.schema.createTable('fact_changes', function(table) {
+  await knex.schema.createTable('fact_changes', function (table) {
     table.increments('id').primary();
     table.timestamp('timestamp').defaultTo(knex.fn.now()).notNullable();
     table.date('day').notNullable();
@@ -81,7 +79,7 @@ export async function up(knex) {
     table.index(['change_category_id']);
   });
 
-  await knex.schema.createTable('fact_logs', function(table) {
+  await knex.schema.createTable('fact_logs', function (table) {
     table.increments('id').primary();
     table.timestamp('timestamp').defaultTo(knex.fn.now()).notNullable();
     table.date('day').notNullable();
@@ -99,25 +97,46 @@ export async function up(knex) {
     table.index(['plant_id']);
   });
 
-  await knex.schema.table('fact_plants', function(table) {
+  await knex.schema.createTable('fact_images', function (table) {
+    table.increments('id').primary();
+    table.integer('plant_id').unsigned().notNullable();
+    table.timestamp('timestamp').defaultTo(knex.fn.now()).notNullable();
+    table.string('filename').notNullable().unique();
+    table.decimal('latitude', 10, 7).nullable().comment('Latitude do local onde a foto foi tirada');
+    table.decimal('longitude', 10, 7).nullable().comment('Longitude do local onde a foto foi tirada');
+    table.timestamp('photo_taken_at').nullable().comment('Horário em que a foto foi tirada');
+    table.string('device_model').nullable().comment('Modelo do dispositivo que tirou a foto');
+    table.integer('iso').nullable().comment('ISO da câmera usada na foto');
+    table.integer('exposure_time').nullable().comment('Tempo de exposição da câmera, em milissegundos');
+    table.integer('f_number').nullable().comment('Número f da câmera usada na foto');
+
+    table.index(['plant_id']);
+  });
+
+  // Add foreign keys
+  await knex.schema.table('fact_plants', function (table) {
     table.foreign('strain_id').references('id').inTable('dim_strains');
     table.foreign('mother_id').references('id').inTable('fact_plants');
     table.foreign('father_id').references('id').inTable('fact_plants');
   });
 
-  await knex.schema.table('dim_strains', function(table) {
+  await knex.schema.table('dim_strains', function (table) {
     table.foreign('father_strain_id').references('id').inTable('dim_strains');
     table.foreign('mother_strain_id').references('id').inTable('dim_strains');
     table.foreign('father_plant_id').references('id').inTable('fact_plants');
     table.foreign('mother_plant_id').references('id').inTable('fact_plants');
   });
 
-  await knex.schema.table('fact_changes', function(table) {
+  await knex.schema.table('fact_changes', function (table) {
     table.foreign('plant_id').references('id').inTable('fact_plants');
     table.foreign('change_category_id').references('id').inTable('dim_change_categories');
   });
 
-  await knex.schema.table('fact_logs', function(table) {
+  await knex.schema.table('fact_logs', function (table) {
+    table.foreign('plant_id').references('id').inTable('fact_plants');
+  });
+
+  await knex.schema.table('fact_images', function (table) {
     table.foreign('plant_id').references('id').inTable('fact_plants');
   });
 }
@@ -127,22 +146,22 @@ export async function up(knex) {
  * @returns { Promise<void> }
  */
 export async function down(knex) {
-  await knex.schema.table('fact_changes', function(table) {
+  await knex.schema.table('fact_changes', function (table) {
     table.dropForeign('plant_id');
     table.dropForeign('change_category_id');
   });
 
-  await knex.schema.table('fact_logs', function(table) {
+  await knex.schema.table('fact_logs', function (table) {
     table.dropForeign('plant_id');
   });
 
-  await knex.schema.table('fact_plants', function(table) {
+  await knex.schema.table('fact_plants', function (table) {
     table.dropForeign('strain_id');
     table.dropForeign('mother_id');
     table.dropForeign('father_id');
   });
 
-  await knex.schema.table('dim_strains', function(table) {
+  await knex.schema.table('dim_strains', function (table) {
     table.dropForeign('father_strain_id');
     table.dropForeign('mother_strain_id');
     table.dropForeign('father_plant_id');
@@ -155,4 +174,5 @@ export async function down(knex) {
   await knex.schema.dropTable('fact_plants');
   await knex.schema.dropTable('dim_strains');
   await knex.schema.dropTable('dim_terpenes');
+  await knex.schema.dropTable('fact_images');
 }

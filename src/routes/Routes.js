@@ -6,12 +6,14 @@ import plantRoutes from './plants.js';
 import logRoutes from './logs.js';
 import changeRoutes from './changes.js';
 
+const apiPrefix = '/api';
+
 const setupRoutes = (app) => {
-  app.use('/', statusRoutes);
-  app.use('/status', statusRoutes);
-  app.use('/plants', plantRoutes);
-  app.use('/logs', logRoutes);
-  app.use('/changes', changeRoutes);
+  app.use(`${apiPrefix}/`, statusRoutes);
+  app.use(`${apiPrefix}/status`, statusRoutes);
+  app.use(`${apiPrefix}/plants`, plantRoutes);
+  app.use(`${apiPrefix}/logs`, logRoutes);
+  app.use(`${apiPrefix}/changes`, changeRoutes);
 };
 
 const setupMiddlewares = (app) => {
@@ -21,7 +23,7 @@ const setupMiddlewares = (app) => {
 };
 
 const setupUploads = (app) => {
-  app.use('/uploads', express.static('./uploads'));
+  app.use(`${apiPrefix}/uploads`, express.static('./uploads'));
 };
 
 const setup = (app) => {
